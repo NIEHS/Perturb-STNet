@@ -6,7 +6,6 @@ _Perturb-STNet_ analysis pipeline can be broken down into two major phases. The 
 
 The analysis pipeline is summarized in the figure below. 
 
-![image](https://github.com/user-attachments/assets/12c9bbd2-aa28-4e8d-ad85-4688dd120c5e)
 ![image](https://github.com/user-attachments/assets/624a5741-b688-4034-9f90-ac688d1a18b7)
 
 
