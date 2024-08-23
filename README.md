@@ -15,7 +15,7 @@ The analysis pipeline is summarized in the figure below.
 
 Detailed instructions or examples on how to use the tool. This can include code snippets, command-line examples, or screenshots.
 ## Parameters
-Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. 
+<p align="justify"> Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. </p>
 ## Examples
 Provide examples or case studies showing how your tool can be used in practice.
 ## Acknowledgments
