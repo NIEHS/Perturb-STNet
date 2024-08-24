@@ -19,7 +19,7 @@ Detailed instructions or examples on how to use the tool. This can include code 
 <p align="justify"> Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. </p>
 
 ## Examples
-### Estimating network - Phase one
+### 1. Estimating network - Phase one
 We adopted Perturb-STNet to determine differentially expressed genes 
 ![image](https://github.com/user-attachments/assets/f2ea3d6c-38f3-418e-8cba-95ca675af0cb)
 
