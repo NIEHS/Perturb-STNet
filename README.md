@@ -22,6 +22,9 @@ Detailed instructions or examples on how to use the tool. This can include code 
 We adopted Perturb-STNet to determine differentially expressed genes 
 ![image](https://github.com/user-attachments/assets/f2ea3d6c-38f3-418e-8cba-95ca675af0cb)
 
+![image](https://github.com/user-attachments/assets/c801c04f-7e29-4eed-ad5d-da7aa3d6f893)
+
+
 
 ## Acknowledgments
 Any acknowledgments for libraries, contributors, or inspiration for your project?
