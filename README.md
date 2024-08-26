@@ -24,6 +24,7 @@ R> install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-
 After INLA installation, the list of packages are loaded in R as follows:
 ```{R}
 library(gamlss.spatial) # For SNR
+library(INLA)           # For mesh triangulation and SNR 
 library(tidyverse)      # Data manipulation
 library(igraph)         # For graph manipulation
 library(doParallel)     # For parallel computing
