@@ -21,7 +21,7 @@ Perturb-STNet depends on $gamlss.spatial$ and $INLA$ packages for spatiotemporal
 ```{R}
 R> install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 ```
-The installation is described as follows:
+After INLA installation, the list of packages are loaded in R as follows:
 ```{R}
 library(gamlss.spatial) # For SNR
 library(tidyverse)      # Data manipulation
