@@ -25,13 +25,13 @@ After installation, the required packages are loaded in R as follows:
 ```{R}
 library(gamlss.spatial) # For SNR
 library(INLA)           # For mesh triangulation and SNR 
-library(tidyverse)      # Data manipulation
+library(tidyverse)      # For data wrangling
 library(igraph)         # For graph manipulation
 library(doParallel)     # For parallel computing
 library(scales)         # 
 library(genie)          #
-library(ggraph)         #
-library(ar.matrix)      #
+library(ggraph)         # For plots
+library(ar.matrix)      # For AR1 autoregressive precision matrix
 ```
 ## Parameters
 <p align="justify"> Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. </p>
