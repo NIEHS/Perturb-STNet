@@ -18,15 +18,14 @@ Detailed instructions or examples on how to use the tool. This can include code 
 ## Dependency Package Installation
 Perturb-STNet depends on $gamlss.spatial$ and $INLA$ packages for spatiotemporal model estimation. $gamlss.spatial$ uses a maximization technique to maximize the penalized log posterior distribution to estimate the parameters and $INLA$ uses the Laplace approximation technique to estimate the full posterior distributions of the model parameters. $gamlss.spatial$ is available on the CRAN repository while INLA is available on https://www.r-inla.org. The installation procedure is straightforward. Other packages include $igraph$, $tidyverse$, among others. The installation is described as follows:
 ```{R}
-library(INLA) # For Imputation
 library(gamlss.spatial) # For SNR
-library(tidyverse) # Data manipulation
-library(igraph)
-library(doParallel)
-library(scales)
-library(genie)
-library(ggraph)
-library(ar.matrix)
+library(tidyverse)      # Data manipulation
+library(igraph)         # For graph manipulation
+library(doParallel)     # For parallel computing
+library(scales)         # 
+library(genie)          #
+library(ggraph)         #
+library(ar.matrix)      #
 ```
 ## Parameters
 <p align="justify"> Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. </p>
