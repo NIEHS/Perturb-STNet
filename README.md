@@ -19,7 +19,7 @@ Detailed instructions or examples on how to use the tool. This can include code 
 Perturb-STNet depends on $gamlss.spatial$ and $INLA$ packages for spatiotemporal model estimation. $gamlss.spatial$ uses a maximization technique to maximize the penalized log posterior distribution to estimate the parameters and $INLA$ uses the Laplace approximation technique to estimate the full posterior distributions of the model parameters. $gamlss.spatial$ is available on the CRAN repository while INLA is available on https://www.r-inla.org. The installation procedure is straightforward. Other packages include $igraph$, $tidyverse$, among others are available on CRAN repository. To install INLA, it is sufficient to run the following code ():
 
 ```{R}
-install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+R> install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 ```
 The installation is described as follows:
 ```{R}
