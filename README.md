@@ -51,6 +51,28 @@ load("SampleData.Rdata")# Contain expression data
 coords[,"lon"] = scale(coords[,"lon"])
 coords[,"lat"] = scale(coords[,"lat"])
 
+# Plot scatter plot of the locations
+p = list()
+days = c(0,1,3,5,12)
+gene = cut(datExpr[,"CD8"],breaks = c(-0.45,-0.25,-1.00,0,4,9,20))
+for (k in 1:5) {
+ id = Metadat$day.harvested==days[k]
+p[[k]]  =  plotScatter(coords[id,"lon"],coords[id,"lat"],Gene =gene[id],
+              main=paste("day ",days[k]),
+              size = 0.01,
+              legend.size = 5,
+              legend.text.size=8,
+              noLegend=F,
+              limits = c(mn-0.05,ma+0.05),
+              ManualColor =TRUE,
+              cols = c("blue","orange","black","magenta","purple","brown"))
+}
+
+ggarrange(p[[1]],p[[2]],
+          p[[3]],p[[4]],
+          p[[5]],nrow = 2,ncol=3,common.legend = T,legend = "right")
+
+
 ```
 ![image](https://github.com/user-attachments/assets/9bf7487a-78f1-44ea-ad1d-e03fa0bd57e0)
 ```{R}
