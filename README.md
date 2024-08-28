@@ -121,7 +121,137 @@ plotTree(mst_grid,o0,vertex.size = Res$nn, main = antibody,Lab = F,limits = c(mn
 
 
 ```{R}
-#
+#############################################
+### Spatio-temporal modeling conditioning on the estimated network
+#############################################
+
+m= vcount(mst_grid)
+nam = colnames(Centers)
+
+# Confounding data (eg. sample replicate indicator)
+ConfoundFrame = Metadat %>%  dplyr::select(replicate)
+
+Data_sub$clusterID.f = as.numeric(Data_sub$clusterID.f)
+
+##########
+# Compute Perturb condition
+Result_Cancer = GetTreeVariableGenesDynamics(mst =mst_grid,
+                                                       ExprsData = Data_sub %>%as.data.frame()%>%
+                                                       mutate(days=Metadat$day.harvested),
+                                                       ClusterCol = "clusterID.f",
+                                                       TemporalCol ="days", 
+                                                       ConfoundFrame=ConfoundFrame,
+                                                       useWeight  = FALSE,
+                                                       Robust     = FALSE,
+                                                       Model="NO",
+                                                       rho_tree = 0.9,
+                                                       rho_temp = 0.5,
+                                                       IncZero= TRUE,
+                                                       DownSample = TRUE,
+                                                       nCores =11
+)
+
+##########
+# Compute Perturb Control condition 
+
+Data_sub_reduced <-  Data_sub[Metadat$day.harvested==0,]
+
+# Get control network
+
+emptyNodes = which( !((1:m)%in%(Data_sub_reduced$clusterID.f %>% unique())))
+
+mst_grid_denoded = delete.vertices(mst_grid,emptyNodes)
+
+m.new = vcount(mst_grid_denoded)
+mst_grid_denoded = ReconectDisconectedNetwk(mst_grid_denoded)
+
+# Get control confounding data
+
+ConfoundFrame_reduced = Metadat[Metadat$day.harvested==0,] %>%  dplyr::select(replicate)
+
+Result_Cancer_control = GetTreeVariableGenesDynamics(mst  =mst_grid_denoded,
+                                             ExprsData = Data_sub_reduced%>%as.data.frame()%>%
+                                               mutate(days=0),
+                                             ClusterCol = "clusterID.f",
+                                             TemporalCol ="days", 
+                                             ConfoundFrame=ConfoundFrame_reduced,
+                                             useWeight  = FALSE,
+                                             Robust     = FALSE,
+                                             Model="NO",
+                                             rho_tree = 0.9,
+                                             rho_temp = 0.5,
+                                             IncZero= TRUE,
+                                             DownSample = TRUE,
+                                             nCores =11
+)
+
+nam = intersect(colnames(Result_Cancer$SNR),colnames(Result_Cancer_control$SNR))
+
+#############################################
+### Compute Differential Nested effect statistics & P-values
+#############################################
+
+Aux_result = data.frame(SNRbefore = Result_Cancer_control$SNR[3,nam],
+                        SNRafter  = Result_Cancer$SNR[3,nam])
+
+Aux_result = Aux_result %>% mutate(FC1 = abs(SNRbefore-SNRafter)/(SNRbefore+1),
+                                   FC2 = abs(SNRbefore-SNRafter)/(SNRafter+1),
+                                   FC = pmax(FC1,FC2),
+                                   Ratio = (SNRbefore+1)/(SNRafter+1)
+)
+
+
+statistic = scale(Aux_result$Ratio,center = T,scale = T)
+# Get null distribution
+
+NullDist = FindNullDistribution(Control  = Result_Cancer_control,
+                                          Perturbed= Result_Cancer,
+            monteCarloDraws = 10)
+NullDist = which.max(NullDist)
+# Eg. LOGNO 
+# Find link functions
+?SEP1
+NullParam = GetNullDistParameters(mst =mst_grid ,
+                                  mst_denoded = mst_grid_denoded,
+                                  Dist="SEP1",
+                                  Location_link=function(x)x,
+                                 Scale_link =function(x)exp(x),
+                                 nu_link = function(x) x,
+                                 tau_link = function(x)exp(x),
+                                 noOfDraws=2)
+
+ Pval = ComputePvalue(NullDist=pSEP1,
+              NullParameters=NullParam,
+              statistic=statistic[,1])
+
+################
+
+Aux_result$pvalue     = Pval$pvalue
+Aux_result$Adj_pvalue = Pval$adjusted_pavalue
+
+
+
+
+########## Plots on map #########
+
+antibody = "MHCII"
+o = Result_Cancer$treeEffect[,antibody] %>% as.matrix() %>% as.vector()
+mn = min(o)
+ma= max(o)
+
+Res = CalculateCellProportion(Data_sub2,nodes ="clusterID.f","Var")
+m=vcount(mst_grid)
+pltday1 = plotTree(mst_grid,o[1:m],vertex.size = Res$nn, main =paste(antibody," Day 0"), Lab = F,limits = c(mn,ma),noLegend = F)
+pltday2 = plotTree(mst_grid,o[1:m+m],vertex.size = Res$nn, main ="Day 1",Lab = F,limits = c(mn,ma),noLegend = F)
+pltday3 = plotTree(mst_grid,o[1:m+2*m],vertex.size = Res$nn, main = "Day 3",Lab = F,limits = c(mn,ma),noLegend = F)
+pltday4 = plotTree(mst_grid,o[1:m+3*m],vertex.size = Res$nn, main = "Day 5",Lab = F,limits = c(mn,ma),noLegend = F)
+pltday5 = plotTree(mst_grid,o[1:m+4*m],vertex.size = Res$nn, main = "Day 12",Lab = F,limits = c(mn,ma),noLegend = F)
+
+ggarrange(pltday1,pltday2,
+          pltday3,pltday4,
+          pltday5,nrow = 1,ncol=5,common.legend = T,legend = "right")
+
+
 ```
 ![image](https://github.com/user-attachments/assets/89aac64e-6dbc-4166-beb3-655a9c01411c)
 
