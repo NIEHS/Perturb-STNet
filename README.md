@@ -40,7 +40,81 @@ library(ar.matrix)      # For AR1 autoregressive precision matrix
 ## Analysis steps
 
 ```{R}
-#
+# Load data from the repository
+load("Coordinate.Rdata")
+load("Metadata.Rdata")  # Contain meta data
+load("SampleData.Rdata")# Contain expression data
+
+# Scale x-y coordinate
+
+coords[,"lon"] = scale(coords[,"lon"])
+coords[,"lat"] = scale(coords[,"lat"])
+
+
+# Perform clustering
+
+kmeans_result <- Hcluster(datExpr,thresholdGini=0.2,k=10,ClusterName="cluster")
+kmeans_result = as.data.frame(kmeans_result)
+
+
+# Get mesh ID
+
+UniqueCellID = NULL
+id=T
+meshId = getPolygonID(coords = coords[id,],
+                         offset = c(.8, .8),
+                         max.edge = c(3.9, 3.9),
+                         cutoff =1,
+                      Pron = T,
+                      Mincell=500)
+UniqueCell = paste0(meshId$cell.meshID,kmeans_result$cluster[id])
+
+UniqueCellID =  UniqueCell
+ 
+# Combine Id to expression data
+
+Data_sub =  datExpr %>% as.data.frame() %>%
+            bind_cols(clusterID.f = as.numeric(as.factor(UniqueCellID)) )
+# Compute biological network using minimum spanning tree
+
+Centers = Data_sub%>% group_by(clusterID.f) %>% summarise_all(mean,na.rm=T)%>%
+  ungroup() %>% dplyr::select(-clusterID.f) 
+
+
+Centers2 = apply(Centers,2,scale)
+mst_grid = ClusterToTree(Centers = Centers)
+
+# Number of nodes on tree
+m=vcount(mst_grid)
+
+######################################################
+#### # Plot descriptive statistics on network ########
+######################################################
+
+
+
+
+Data_sub2 =bind_cols(Data_sub,Metadat)
+Data_sub2$Var = 1
+
+# Plot descriptive statistics on network
+
+antibody ="CD8" # for example
+
+Res = CalculateCellProportion(Data_sub2,nodes ="clusterID.f","Var")
+
+oo0 =Data_sub2 %>% group_by(clusterID.f) %>% summarise_all(mean,na.rm=T)
+
+
+o0 = oo0 %>% dplyr::select(all_of(antibody)) %>% as.matrix() %>% as.vector()
+
+
+mn = min(c(o0))
+ma = max(c(o0))
+
+plotTree(mst_grid,o0,vertex.size = Res$nn, main = antibody,Lab = F,limits = c(mn,ma),noLegend =F)
+
+
 ```
 ![image](https://github.com/user-attachments/assets/ae654bf9-4a49-40b9-9adf-0650e77055fa)
 
