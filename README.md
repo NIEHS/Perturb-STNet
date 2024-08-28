@@ -39,6 +39,7 @@ library(ar.matrix)      # For AR1 autoregressive precision matrix
 
 ## Analysis steps
 
+
 ```{R}
 # Load data from the repository
 load("Coordinate.Rdata")
@@ -50,7 +51,9 @@ load("SampleData.Rdata")# Contain expression data
 coords[,"lon"] = scale(coords[,"lon"])
 coords[,"lat"] = scale(coords[,"lat"])
 
-
+```
+![image](https://github.com/user-attachments/assets/9bf7487a-78f1-44ea-ad1d-e03fa0bd57e0)
+```{R}
 # Perform clustering
 
 kmeans_result <- Hcluster(datExpr,thresholdGini=0.2,k=10,ClusterName="cluster")
