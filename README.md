@@ -81,7 +81,8 @@ ggarrange(p[[1]],p[[2]],
 
 
 ```
-![image](https://github.com/user-attachments/assets/9bf7487a-78f1-44ea-ad1d-e03fa0bd57e0)
+![image](https://github.com/user-attachments/assets/b37787c1-7821-4794-8f93-faac55cb770a)
+
 ```{R}
 # Perform clustering
 
