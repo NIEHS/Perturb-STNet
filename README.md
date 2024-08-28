@@ -46,6 +46,13 @@ load("Coordinate.Rdata")
 load("Metadata.Rdata")  # Contain meta data
 load("SampleData.Rdata")# Contain expression data
 
+head(coords )
+head(datExpr[,1:5])
+head(Metadat)
+```
+![image](https://github.com/user-attachments/assets/184bc520-6f0a-4037-b3a2-686126aa51c8)
+
+```{R}
 # Scale x-y coordinate
 
 coords[,"lon"] = scale(coords[,"lon"])
