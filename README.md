@@ -41,7 +41,7 @@ library(ar.matrix)      # For AR1 autoregressive precision matrix
 
 
 ```{R}
-# Load data from the repository
+# Load data from the perturb-STNet repository (https://github.com/NIEHS/Perturb-STNet)
 load("Coordinate.Rdata")
 load("Metadata.Rdata")  # Contain meta data
 load("SampleData.Rdata")# Contain expression data
