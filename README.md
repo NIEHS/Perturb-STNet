@@ -116,7 +116,8 @@ plotTree(mst_grid,o0,vertex.size = Res$nn, main = antibody,Lab = F,limits = c(mn
 
 
 ```
-![image](https://github.com/user-attachments/assets/2eec1056-1fe4-45cf-a50f-a9eb9c82c5e4)
+![image](https://github.com/user-attachments/assets/64dc87d9-fb0e-47e5-a47d-efe7c72b9433)
+
 
 
 ```{R}
