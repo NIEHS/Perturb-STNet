@@ -285,7 +285,7 @@ library(corrplot)
 alpha=0.05
 SignificantGenes = rownames(Aux_result[Aux_result$Adj_pvalue<alpha,])
 nam =SignificantGenes
-M = Result_Cancer$treeEffect
+M = Result_Cancer$treeEffect[,nam]
 
 M = cor(M)
 corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0.8)
