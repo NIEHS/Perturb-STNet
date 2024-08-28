@@ -38,10 +38,10 @@ library(ar.matrix)      # For AR1 autoregressive precision matrix
 <p align="justify"> Perturb-STNet requires different parameter specifications, especially to determine the size of the mesh polygons. Note that a higher number of polygons will result in better estimates. However, there is a trade-off. A higher number increases the complexity of the estimation process. It is recommended to start with a reasonable number (which will be demonstrated in the "Example section") at the initial stage of the analysis and can be increased for the final analysis. </p>
 
 ## Analysis steps
-
+In this section, we presented the analysis steps of using the Perturb-STNet algorithm for detecting proteins and estimating their dynamic patterns and regulatory profiles. The Perturb-STNet R functions are well documented in the "utilityFunctionGithub" file in the repository (https://github.com/NIEHS/Perturb-STNet), where the definition of all the parameters in the functions can be found. 
 
 ```{R}
-# Load data from the perturb-STNet repository (https://github.com/NIEHS/Perturb-STNet)
+# Load data from the perturb-STNet repository 
 load("Coordinate.Rdata")
 load("Metadata.Rdata")  # Contain meta data
 load("SampleData.Rdata")# Contain expression data
