@@ -16,7 +16,11 @@ The analysis pipeline is summarized in the figure below.
 Detailed instructions or examples on how to use the tool. This can include code snippets, command-line examples, or screenshots.
 
 ## Dependency Package Installation
-Perturb-STNet depends on $igraph$ package for constructing a minimum-spanning tree, and $gamlss.spatial$ for spatiotemporal model estimation. $gamlss.spatial$ uses a maximization technique to maximize the penalized log posterior distribution to estimate the model parameters. All packages adopted by Perturb-STNEt are available on the CRAN repository. The installation procedure is straightforward. 
+Perturb-STNet depends on $igraph$ package for constructing a minimum-spanning tree, and $gamlss.spatial$ for spatiotemporal model estimation. $gamlss.spatial$ uses a maximization technique to maximize the penalized log posterior distribution to estimate the model parameters. All packages adopted by Perturb-STNEt, except INLA, are available on the CRAN repository. The installation procedure is straightforward. For INLA, it is available on https://www.r-inla.org. The installation procedure is straightforward. To install INLA, it is sufficient to run the following code (see https://www.r-inla.org/download-install):
+
+```{R}
+R> install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+```
 After installation, the required packages are loaded in R as follows:
 ```{R}
 library(gamlss.spatial) # For SNR
