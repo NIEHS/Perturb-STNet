@@ -42,7 +42,8 @@ library(ar.matrix)      # For AR1 autoregressive precision matrix
 ```{R}
 #
 ```
-![image](https://github.com/user-attachments/assets/b10b8211-b8d8-4bd1-b67b-bbbd3c014c41)
+![image](https://github.com/user-attachments/assets/ae654bf9-4a49-40b9-9adf-0650e77055fa)
+
 ```{R}
 #
 ```
