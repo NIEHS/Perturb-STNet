@@ -280,7 +280,16 @@ ggarrange(pltday1,pltday2,
 ```
 ![image](https://github.com/user-attachments/assets/89aac64e-6dbc-4166-beb3-655a9c01411c)
 ```{R}
-#
+# Get Regulatory profile
+library(corrplot)
+alpha=0.05
+SignificantGenes = rownames(Aux_result[Aux_result$Adj_pvalue<alpha,])
+nam =SignificantGenes
+M = Result_Cancer$treeEffect
+
+M = cor(M)
+corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0.8)
+
 ```
 ![image](https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce)
 
