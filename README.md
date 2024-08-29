@@ -84,7 +84,7 @@ ggarrange(p[[1]],p[[2]],
 ```
 ![image](https://github.com/user-attachments/assets/b37787c1-7821-4794-8f93-faac55cb770a)
 
-Perturb-STNet estimation algorithm  begins.
+## The perturb-STNet estimation algorithm  begins.
 ```{R}
 
 # Perform clustering
