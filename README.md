@@ -84,10 +84,9 @@ ggarrange(p[[1]],p[[2]],
 ```
 ![image](https://github.com/user-attachments/assets/b37787c1-7821-4794-8f93-faac55cb770a)
 
+Perturb-STNet estimation algorithm  begins.
 ```{R}
-##################################
-### Perturb-STNet Framework Begins
-##################################
+
 # Perform clustering
 
 kmeans_result <- Hcluster(datExpr,thresholdGini=0.2,k=10,ClusterName="cluster")
