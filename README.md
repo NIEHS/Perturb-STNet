@@ -86,7 +86,9 @@ ggarrange(p[[1]],p[[2]],
 
 ## The perturb-STNet estimation algorithm  begins.
 ```{R}
-
+##########################################
+#### # Estimate bilogical network ########
+##########################################
 # Perform clustering
 
 kmeans_result <- Hcluster(datExpr,thresholdGini=0.2,k=10,ClusterName="cluster")
