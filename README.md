@@ -52,7 +52,8 @@ head(coords )
 head(datExpr[,1:5])
 head(Metadat)
 ```
-![image](https://github.com/user-attachments/assets/184bc520-6f0a-4037-b3a2-686126aa51c8)
+
+<img src="https://github.com/user-attachments/assets/184bc520-6f0a-4037-b3a2-686126aa51c8" width="600" />
 
 ```{R}
 # Scale x-y coordinate
