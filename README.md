@@ -367,4 +367,4 @@ The above plot shows the regulatory profile of the significant proteins. It is c
 ## Acknowledgments
 This work was supported by funding from grant number 1ZIAES103350-04 from NIH/NIEHS/DIR
 ## Contact Information
-This repository is maintained by Osafu A. Egbon (eosafu.a@gmail.com,osafu.egbon@nih.gov)
+For enquiries, please reach Osafu Egbon through eosafu.a@gmail.com or osafu.egbon@nih.gov.
