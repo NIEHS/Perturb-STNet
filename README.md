@@ -352,7 +352,8 @@ corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0
 
 ```
 ![image](https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce)
-<img src="https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce" width="300" />
+<img src="https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce" width="600" />
+
 The above plot shows the regulatory profile of the significant proteins. It is calculated as the Pearson correlation cooefficient of the estimated dynamic effect patterns of all the significant proteins
 ## Acknowledgments
 This work was supported by funding from grant number 1ZIAES103350-04 from NIH/NIEHS/DIR
