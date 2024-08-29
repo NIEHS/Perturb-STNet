@@ -329,6 +329,9 @@ ggarrange(p[[1]],p[[2]],
           p[[5]],nrow = 2,ncol=3,common.legend = F,legend = "right")
 
 ```
+![image](https://github.com/user-attachments/assets/0a5da0a4-caa6-4ab9-b620-615253f5e30c)
+
+```{R}
 # Get Regulatory profile
 library(corrplot)
 alpha=0.05
