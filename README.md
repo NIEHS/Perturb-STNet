@@ -294,7 +294,7 @@ ggarrange(pltday1,pltday2,
 ```
 ![image](https://github.com/user-attachments/assets/89aac64e-6dbc-4166-beb3-655a9c01411c)
 
-The above network shows the dynamic pattern of MHCII protein across the harvesting days. 
+The above network shows the estimated dynamic effect patterns of MHCII protein across the harvesting days. 
 
 ```{R}
 
