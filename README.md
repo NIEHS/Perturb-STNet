@@ -346,6 +346,6 @@ corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0
 ![image](https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce)
 
 ## Acknowledgments
-Any acknowledgments for libraries, contributors, or inspiration for your project?
+This work was supported by funding from grant number 1ZIAES103350-04 from NIH/NIEHS/DIR
 ## Contact Information
 This repository is maintained by Osafu A. Egbon (eosafu.a@gmail.com,osafu.egbon@nih.gov)
