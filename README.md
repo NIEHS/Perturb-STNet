@@ -338,7 +338,7 @@ ggarrange(p[[1]],p[[2]],
 
 ```
 ![image](https://github.com/user-attachments/assets/0a5da0a4-caa6-4ab9-b620-615253f5e30c)
-The above plot shows the same estimated dynamic effect patterns (on the previous plot) on the x-y coordinate of the MHCII protein across the harvesting days. 
+The above plot shows the same estimated dynamic effect patterns of the MHCII protein on the x-y coordinate across the harvesting days. 
 ```{R}
 # Get Regulatory profile
 library(corrplot)
@@ -352,7 +352,7 @@ corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0
 
 ```
 ![image](https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce)
-
+The above plot shows the 
 ## Acknowledgments
 This work was supported by funding from grant number 1ZIAES103350-04 from NIH/NIEHS/DIR
 ## Contact Information
