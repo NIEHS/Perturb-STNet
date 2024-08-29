@@ -228,9 +228,6 @@ Result_Cancer_control = GetTreeVariableGenesDynamics(mst  =mst_grid_denoded,
 
 nam = intersect(colnames(Result_Cancer$SNR),colnames(Result_Cancer_control$SNR))
 
-#############################################
-### Compute Differential Nested effect statistics & P-values
-#############################################
 
 Aux_result = data.frame(SNRbefore = Result_Cancer_control$SNR[3,nam],
                         SNRafter  = Result_Cancer$SNR[3,nam])
@@ -240,6 +237,16 @@ Aux_result = Aux_result %>% mutate(FC1 = abs(SNRbefore-SNRafter)/(SNRbefore+1),
                                    FC = pmax(FC1,FC2),
                                    Ratio = (SNRbefore+1)/(SNRafter+1)
 )
+
+head(Aux_result)
+```
+![image](https://github.com/user-attachments/assets/3817d25a-0d9c-4d82-9772-fe53d7ae6055)
+
+```{R}
+#############################################
+### Compute Differential Nested effect statistics & P-values
+#############################################
+
 
 
 statistic = scale(Aux_result$Ratio,center = T,scale = T)
