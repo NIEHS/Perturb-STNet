@@ -157,7 +157,7 @@ plotTree(mst_grid,o0,vertex.size = Res$nn, main = antibody,Lab = F,limits = c(mn
 
 ![image](https://github.com/user-attachments/assets/bc9ee96b-6777-4b14-bfb8-1a5a488523ca)
 
-
+The biological network shows nodes and edges. A node is a collection of homogeneous cells of the same cell type in a given neighborhood on the tissue image. The edges between nodes are established if the protein profile between cells in the two nodes is sufficiently high (without doubt).
 
 ```{R}
 #############################################
