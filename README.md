@@ -167,7 +167,9 @@ Data_sub2$Var = 1
 
 ####### Part A ends #########
 #############################
+```
 
+```{R}
 ## Plot summarized genes on estimated network
 
 antibody ="Fos" # for example
@@ -189,7 +191,7 @@ plotTree(mst_grid,o0,vertex.size = Res$nn,
 <img width="1307" alt="ntwk" src="https://github.com/user-attachments/assets/cdf005ba-dfad-4d02-8354-142dfe9df20e" />
 
 ```{R}
-## Plot cell types of network
+## Plot cell types on network
 
 get_mode <- function(x) {
   # Remove NA values
@@ -265,7 +267,10 @@ R = SpatioTemporalEstimation(mst = mst_grid,
                              DownSample = TRUE,
                              pvalue=FALSE,
                              nCores =15)
+```
 
+
+```{R}
 ########## Plots effects on on network #########
 Result_Cancer = R$Result_perturb
 antibody = "Fos"
