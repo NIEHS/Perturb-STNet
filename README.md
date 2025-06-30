@@ -76,312 +76,281 @@ head(meta.data)
 
 
 ```{R}
-# Scale x-y coordinate
+# Sample_type in the meta.data is the sample collection day. PLease take note of the control (Healthy).
 
-coords[,"lon"] = scale(coords[,"lon"])
-coords[,"lat"] = scale(coords[,"lat"])
+meta.data$Sample_type2 = factor(meta.data$Sample_type,levels =c("Healthy","DSS9"),
+                                labels = 0:1) %>%as.numeric()
+meta.data$Sample_type2 = meta.data$Sample_type2-1 # To range from 0-1: 0--> for healthy and 1--> for day 9
 
-# Plot scatter plot of the locations
+days =meta.data$Sample_type2
+day  = unique(days)
+slice = meta.data$Slice_ID
+
+## Make descriptive example plot of a specific gene/protein
+
+antibody = "Fos" # for example
+
+numberOfDays = length(day)
+gene = datExpr[,antibody]
+
 p = list()
-days = c(0,1,3,5,12)
-gene = cut(datExpr[,"CD8"],breaks = c(-0.45,-0.25,-1.00,0,4,9,20))
-for (k in 1:5) {
- id = Metadat$day.harvested==days[k]
-p[[k]]  =  plotScatter(coords[id,"lon"],coords[id,"lat"],Gene =gene[id],
-              main=paste("day ",days[k]),
-              size = 0.01,
-              legend.size = 5,
-              legend.text.size=8,
-              noLegend=F,
-              limits = c(mn-0.05,ma+0.05),
-              ManualColor =TRUE,
-              cols = c("blue","orange","black","magenta","purple","brown"))
+
+for (k in 1:numberOfDays) {
+  id = days ==day[k]
+  p[[k]]  =  plotScatter(coords[id,"x"],coords[id,"y"],Gene =gene[id],
+                         main=paste(antibody," :day ",c(0,9)[k]),
+                         size = .1,
+                         legend.size = 5,
+                         legend.text.size=8,
+                         noLegend=F,
+                         ManualColor =F,
+                         cols = c8)
 }
 
 ggarrange(p[[1]],p[[2]],
-          p[[3]],p[[4]],
-          p[[5]],nrow = 2,ncol=3,common.legend = T,legend = "right")
-
-
+          nrow = 2,ncol=1,common.legend = T,legend = "right")
 ```
-![image](https://github.com/user-attachments/assets/b37787c1-7821-4794-8f93-faac55cb770a)
+<img width="1266" alt="fos" src="https://github.com/user-attachments/assets/745f3ecf-0773-4fd4-b74f-5ddd7714ab3d" />
+
+```{R}
+## Plot by cell types 
+c8 = c25[1:8] # Color
+names(c8) = unique(meta.data$Tier1)%>%as.character()
+
+p = list()
+antibody = "Cell type"
+gene = as.factor(meta.data$Tier1)
+col = unique(gene)%>% as.character()%>% sort
+
+for (k in 1:numberOfDays) {
+  id = days ==day[k]
+  p[[k]]  =  plotScatter(coords[id,"x"],coords[id,"y"],Gene =gene[id],
+                         main=paste(antibody," :day ",c(0,9)[k]),
+                         size = .05,
+                         legend.size = 5,
+                         legend.text.size=8,
+                         noLegend=F,
+                         ManualColor =T,
+                         cols = c8[col])
+}
+
+ggarrange(p[[1]],p[[2]],
+          nrow = 2,ncol=1,common.legend =F,legend = "right")
+```
+ <img width="1271" alt="ctype" src="https://github.com/user-attachments/assets/745f2dbb-fcd3-4076-aa57-eb16ad5880fa" />
+
 
 ## The perturb-STNet estimation algorithm  begins.
 ```{R}
 ##########################################
 #### # Estimate bilogical network ########
 ##########################################
-# Perform clustering
+####### Part A Begins #########
+# Get estimated Network
 
-kmeans_result <- Hcluster(datExpr,thresholdGini=0.2,k=10,ClusterName="cluster")
-kmeans_result = as.data.frame(kmeans_result)
+GetNetwork_ <- GetNetwork(datExpr,coords = coords,sample_id = paste0(days,slice),
+                          thresholdGini=0.2,
+                          k=30, # Approximate Number of nodes
+                          offset = c(1, 1), # Mesh offset
+                          max.edge = c(3.8, 3.8),# Mesh max edge
+                          cutoff =1, # Mesh cutoff
+                          Pron = T, # medge nodes with fewer than Mincell
+                          Mincell=100)
 
-
-# Get mesh ID
-
-UniqueCellID = NULL
-id=T
-meshId = getPolygonID(coords = coords[id,],
-                         offset = c(.8, .8),
-                         max.edge = c(3.9, 3.9),
-                         cutoff =1,
-                      Pron = T,
-                      Mincell=500)
-UniqueCell = paste0(meshId$cell.meshID,kmeans_result$cluster[id])
-
-UniqueCellID =  UniqueCell
- 
-# Combine Id to expression data
-
-Data_sub =  datExpr %>% as.data.frame() %>%
-            bind_cols(clusterID.f = as.numeric(as.factor(UniqueCellID)) )
-# Compute biological network using minimum spanning tree
-
-Centers = Data_sub%>% group_by(clusterID.f) %>% summarise_all(mean,na.rm=T)%>%
-  ungroup() %>% dplyr::select(-clusterID.f) 
-
-
-Centers2 = apply(Centers,2,scale)
-mst_grid = ClusterToTree(Centers = Centers)
-
-# Number of nodes on tree
-m=vcount(mst_grid)
-
-######################################################
-#### # Plot descriptive statistics on network ########
-######################################################
-
-
-
-
-Data_sub2 =bind_cols(Data_sub,Metadat)
+Data_sub = GetNetwork_$UpdatedExprData
+mst_grid = GetNetwork_$Network
+m = vcount(mst_grid)
+Centers = GetNetwork_$Centers
+meta.data = meta.data[rownames(Data_sub),]
+Data_sub2 =bind_cols(Data_sub,meta.data)
 Data_sub2$Var = 1
 
-# Plot descriptive statistics on network
+####### Part A ends #########
+#############################
 
-antibody ="CD8" # for example
+## Plot summarized genes on estimated network
+
+antibody ="Fos" # for example
 
 Res = CalculateCellProportion(Data_sub2,nodes ="clusterID.f","Var")
 
 oo0 =Data_sub2 %>% group_by(clusterID.f) %>% summarise_all(mean,na.rm=T)
 
-
 o0 = oo0 %>% dplyr::select(all_of(antibody)) %>% as.matrix() %>% as.vector()
 
 
-mn = min(c(o0))
-ma = max(c(o0))
+plotTree(mst_grid,o0,vertex.size = Res$nn,
+         main = antibody,
+         Lab = F,
+         noLegend =F,
+         edge_color = "grey",
+         edge_alpha = .1)
+```
+<img width="1307" alt="ntwk" src="https://github.com/user-attachments/assets/cdf005ba-dfad-4d02-8354-142dfe9df20e" />
 
-plotTree(mst_grid,o0,vertex.size = Res$nn, main = antibody,Lab = F,limits = c(mn,ma),noLegend =F)
+```{R}
+## Plot cell types of network
+
+get_mode <- function(x) {
+  # Remove NA values
+  x <- na.omit(x)
+  
+  # Tabulate frequencies
+  freq_table <- table(x)
+  
+  # Return value(s) with max frequency
+  modes <- names(freq_table)[freq_table == max(freq_table)]
+  modes = modes[1]
+  # Convert to original type
+  if (is.numeric(x)) {
+    return(as.numeric(modes))
+  } else {
+    return(modes)
+  }
+}
 
 
+# Plot Cell types on estimated Network
+
+oo0 = Data_sub2[,c("clusterID.f","Tier1")] %>% group_by(clusterID.f) %>% summarise_all(get_mode )
+o0 = oo0 %>% dplyr::select(Tier1) %>% as.matrix() %>% as.vector()
+
+plotTree(mst_grid,as.factor(o0),vertex.size = Res$nn,
+         main = antibody,
+         Lab = F,
+         noLegend =F,
+         edge_color = "grey",
+         edge_alpha = .1,
+         legend.size = 2,
+         cols =  c8[col])
 ```
 
-<img src="https://github.com/user-attachments/assets/bc9ee96b-6777-4b14-bfb8-1a5a488523ca" width="800" />
+<img width="1307" alt="ctypnwk" src="https://github.com/user-attachments/assets/6e8ad061-3552-44ef-9d61-ebbacf94dadb" />
+
 
 The biological network shows above nodes and edges. A node is a collection of homogeneous cells of the same cell type in a given neighborhood on the tissue image. The edges between nodes are established if the protein profile between cells in the two nodes is sufficiently high (without doubt).
 
 ```{R}
+
 #############################################
-### Spatio-temporal modeling conditioning on the estimated network
+### Part B begins (Spatio-temporal modeling)
 #############################################
 
-m= vcount(mst_grid)
-nam = colnames(Centers)
+# Spatio-temporal modeling conditioning on the estimated network
 
 # Confounding data (eg. sample replicate indicator)
-ConfoundFrame = Metadat %>%  dplyr::select(replicate)
-
+# ConfoundFrame = meta.data %>%  dplyr::select(replicate) # uncomment if you need to adjust for covariates
 Data_sub$clusterID.f = as.numeric(Data_sub$clusterID.f)
-
+Data_sub$days = meta.data$Sample_type2
 ##########
-# Compute Perturb condition
-Result_Cancer = GetTreeVariableGenesDynamics(mst =mst_grid,
-                                                       ExprsData = Data_sub %>%as.data.frame()%>%
-                                                       mutate(days=Metadat$day.harvested),
-                                                       ClusterCol = "clusterID.f",
-                                                       TemporalCol ="days", 
-                                                       ConfoundFrame=ConfoundFrame,
-                                                       useWeight  = FALSE,
-                                                       Robust     = FALSE,
-                                                       Model="NO",
-                                                       rho_tree = 0.9,
-                                                       rho_temp = 0.5,
-                                                       IncZero= TRUE,
-                                                       DownSample = TRUE,
-                                                       nCores =11
-)
 
-##########
-# Compute Perturb Control condition 
+# For demonstration purpose, we selected genes with high variation 
 
-Data_sub_reduced <-  Data_sub[Metadat$day.harvested==0,]
+a = apply(Data_sub,2,var) %>% sort(decreasing = T) %>% names
+a = a[6:36] 
 
-# Get control network
+R = SpatioTemporalEstimation(mst = mst_grid,
+                             ExprsData = Data_sub[,union(a,c("clusterID.f","days"))],
+                             ClusterCol = "clusterID.f",
+                             TemporalCol ="days", 
+                             ControlDay =0,
+                             ConfoundFrame=NULL,
+                             useWeight  = FALSE,
+                             Robust     = FALSE,
+                             Model="NO", # Robust = FALSE, must specify  distribution: NO implies Normal. Check GAMLSS interface in R
+                             interface = "INLA",
+                             rho_tree = 0.9,
+                             rho_temp = 0.5,
+                             IncZero= TRUE,
+                             DownSample = TRUE,
+                             pvalue=FALSE,
+                             nCores =15)
 
-emptyNodes = which( !((1:m)%in%(Data_sub_reduced$clusterID.f %>% unique())))
-
-mst_grid_denoded = delete.vertices(mst_grid,emptyNodes)
-
-m.new = vcount(mst_grid_denoded)
-mst_grid_denoded = ReconectDisconectedNetwk(mst_grid_denoded)
-
-# Get control confounding data
-
-ConfoundFrame_reduced = Metadat[Metadat$day.harvested==0,] %>%  dplyr::select(replicate)
-
-Result_Cancer_control = GetTreeVariableGenesDynamics(mst  =mst_grid_denoded,
-                                             ExprsData = Data_sub_reduced%>%as.data.frame()%>%
-                                               mutate(days=0),
-                                             ClusterCol = "clusterID.f",
-                                             TemporalCol ="days", 
-                                             ConfoundFrame=ConfoundFrame_reduced,
-                                             useWeight  = FALSE,
-                                             Robust     = FALSE,
-                                             Model="NO",
-                                             rho_tree = 0.9,
-                                             rho_temp = 0.5,
-                                             IncZero= TRUE,
-                                             DownSample = TRUE,
-                                             nCores =11
-)
-
-nam = intersect(colnames(Result_Cancer$SNR),colnames(Result_Cancer_control$SNR))
-
-
-Aux_result = data.frame(SNRbefore = Result_Cancer_control$SNR[3,nam],
-                        SNRafter  = Result_Cancer$SNR[3,nam])
-
-Aux_result = Aux_result %>% mutate(FC1 = abs(SNRbefore-SNRafter)/(SNRbefore+1),
-                                   FC2 = abs(SNRbefore-SNRafter)/(SNRafter+1),
-                                   FC = pmax(FC1,FC2),
-                                   Ratio = (SNRbefore+1)/(SNRafter+1)
-)
-
-head(Aux_result)
-```
-![image](https://github.com/user-attachments/assets/3817d25a-0d9c-4d82-9772-fe53d7ae6055)
-
-```{R}
-#############################################
-### Compute Differential Nested effect statistics & P-values
-#############################################
-
-
-
-statistic = scale(Aux_result$Ratio,center = T,scale = T)
-# Get null distribution
-
-NullDist = FindNullDistribution(Control  = Result_Cancer_control,
-                                          Perturbed= Result_Cancer,
-            monteCarloDraws = 10)
-NullDist = which.max(NullDist)
-# Eg. LOGNO 
-# Find link functions
-?SEP1
-NullParam = GetNullDistParameters(mst =mst_grid ,
-                                  mst_denoded = mst_grid_denoded,
-                                  Dist="SEP1",
-                                  Location_link=function(x)x,
-                                 Scale_link =function(x)exp(x),
-                                 nu_link = function(x) x,
-                                 tau_link = function(x)exp(x),
-                                 noOfDraws=2)
-
- Pval = ComputePvalue(NullDist=pSEP1,
-              NullParameters=NullParam,
-              statistic=statistic[,1])
-
-################
-
-Aux_result$pvalue     = Pval$pvalue
-Aux_result$Adj_pvalue = Pval$adjusted_pavalue
-
-
-
-
-########## Plots on map #########
-
-antibody = "MHCII"
+########## Plots effects on on network #########
+Result_Cancer = R$Result_perturb
+antibody = "Fos"
 o = Result_Cancer$treeEffect[,antibody] %>% as.matrix() %>% as.vector()
 mn = min(o)
 ma= max(o)
 
 Res = CalculateCellProportion(Data_sub2,nodes ="clusterID.f","Var")
 m=vcount(mst_grid)
-pltday1 = plotTree(mst_grid,o[1:m],vertex.size = Res$nn, main =paste(antibody," Day 0"), Lab = F,limits = c(mn,ma),noLegend = F)
-pltday2 = plotTree(mst_grid,o[1:m+m],vertex.size = Res$nn, main ="Day 1",Lab = F,limits = c(mn,ma),noLegend = F)
-pltday3 = plotTree(mst_grid,o[1:m+2*m],vertex.size = Res$nn, main = "Day 3",Lab = F,limits = c(mn,ma),noLegend = F)
-pltday4 = plotTree(mst_grid,o[1:m+3*m],vertex.size = Res$nn, main = "Day 5",Lab = F,limits = c(mn,ma),noLegend = F)
-pltday5 = plotTree(mst_grid,o[1:m+4*m],vertex.size = Res$nn, main = "Day 12",Lab = F,limits = c(mn,ma),noLegend = F)
+pltday1 = plotTree(mst_grid,o[1:m],
+                   vertex.size = Res$nn,
+                   main =paste(antibody," Day 0"), 
+                   Lab = F,noLegend = F,
+                   edge_color = "grey",
+                   edge_alpha = .051)
+pltday2 = plotTree(mst_grid,o[1:m+m],
+                   vertex.size = Res$nn,
+                   main ="Day 9",
+                   Lab = F,
+                   noLegend = F,
+                   edge_color = "grey",
+                   edge_alpha = .051)
 
 ggarrange(pltday1,pltday2,
-          pltday3,pltday4,
-          pltday5,nrow = 1,ncol=5,common.legend = T,legend = "right")
+         nrow = 1,ncol=2,common.legend = T,legend = "right")
+
 
 
 ```
-![image](https://github.com/user-attachments/assets/89aac64e-6dbc-4166-beb3-655a9c01411c)
-
-The above network shows the estimated dynamic effect patterns of MHCII protein across the harvesting days. 
+<img width="1518" alt="effonNwk" src="https://github.com/user-attachments/assets/13f85ad9-030d-4a2b-a413-a9dabda42ca6" />
 
 ```{R}
 
-```{R}
-########## Plots estimated effect on on image #########
-antibody = "MHCII"
+########## Plots estimated effect on on image
+
+antibody = "Fos"
 o = Result_Cancer$treeEffect[,antibody] %>% as.matrix() %>% as.vector()
-mn = min(o)
-ma = max(o)
-datEffect = data.frame(id= rep(1:m,5),o=o)
+
+datEffect = data.frame(id= rep(1:m,2),o=o)
 
 Graphid = GetNodeID(ExprsData = Data_sub %>%as.data.frame()%>%
-                      mutate(days=Metadat$day.harvested),
+                      mutate(days=meta.data$Sample_type2),
                     ClusterCol = "clusterID.f",
                     TemporalCol ="days"
-                    ) 
+)
 Graphid = data.frame(Graphid,o=o)
-Data_sub_sub = data.frame(Data_sub,TreeTemp=paste0(Data_sub$clusterID.f,Metadat$day.harvested))
+Data_sub_sub = data.frame(Data_sub,TreeTemp=paste0(Data_sub$clusterID.f,meta.data$Sample_type2))
 Data_sub_sub = left_join(Data_sub_sub,Graphid,by="TreeTemp")
 
 
 p = list()
-days = c(0,1,3,5,12)
-gene = cut(Data_sub_sub[,"o"],breaks = c(-0.45,-0.25,-1.00,0,4,9,25))
-for (k in 1:5) {
-  id = Metadat$day.harvested==days[k]
-  p[[k]]  =  plotScatter(coords[id,"lon"],coords[id,"lat"],Gene =gene[id],
-                         main=paste("day ",days[k]),
+
+gene = Data_sub_sub[,"o"]
+for (k in 1:2) {
+  id = meta.data$Sample_type2==day[k]
+  p[[k]]  =  plotScatter(meta.data$x[id],meta.data$y[id],Gene =gene[id],
+                         main=paste(antibody," day ",day[k]),
                          size = 0.01,
                          legend.size = 2,
                          legend.text.size=8,
                          noLegend=F,
-                         limits = c(mn-0.05,ma+0.05),
-                         ManualColor =TRUE,
-                         cols = c("blue","orange","black","magenta","purple","brown"))
+                         ManualColor =F,
+                         cols = c25)
 }
 
-ggarrange(p[[1]],p[[2]],
-          p[[3]],p[[4]],
-          p[[5]],nrow = 2,ncol=3,common.legend = F,legend = "right")
+ggarrange(p[[1]],p[[2]],nrow = 1,ncol=2,common.legend = F,legend = "right")
 
 ```
-![image](https://github.com/user-attachments/assets/0a5da0a4-caa6-4ab9-b620-615253f5e30c)
-The above plot shows the same estimated dynamic effect patterns of the MHCII protein on the x-y coordinate across the harvesting days. 
+<img width="1442" alt="efftissue" src="https://github.com/user-attachments/assets/ea2337ae-fe7d-44ee-8157-c18fd404f240" />
+
+
 ```{R}
 # Get Regulatory profile
+
 library(corrplot)
-alpha=0.05
-SignificantGenes = rownames(Aux_result[Aux_result$Adj_pvalue<alpha,])
-nam =SignificantGenes
-M = Result_Cancer$treeEffect[,nam]
+
+M = Result_Cancer$treeEffect
 
 M = cor(M)
-corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0.8)
+corrplot(M, method = 'shade', order = 'AOE', diag = TRUE, addrect = 3,tl.cex = 0.5)
 
 ```
 
-<img src="https://github.com/user-attachments/assets/afe77b50-5125-4b3f-bdab-b78ed88417ce" width="600" />
+<img width="829" alt="cor" src="https://github.com/user-attachments/assets/f2015046-2db0-4edd-8cef-40fb172f1276" />
+
 
 The above plot shows the regulatory profile of the significant proteins. It is calculated as the Pearson correlation cooefficient of the estimated dynamic effect patterns of all the significant proteins
 ## Acknowledgments
