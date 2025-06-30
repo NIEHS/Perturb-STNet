@@ -24,7 +24,7 @@ R> install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-
 ```
 After installation, the required packages are loaded in R as follows:
 ```{R}
-library(INLA) # For Imputation & SNR
+library(INLA)           # For Imputation & SNR
 library(gamlss.spatial) # For SNR
 library(tidyverse)      # Data manipulation
 library(igraph)         #  graph manipulation
