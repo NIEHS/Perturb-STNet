@@ -43,9 +43,12 @@ source("UtilityFunctionsGithub.R")
 In this section, we presented the analysis steps of using the Perturb-STNet algorithm for detecting proteins and estimating their dynamic patterns and regulatory profiles to investigate the impact of T-cell therapy on melanoma. The Perturb-STNet R functions are well documented in the "utilityFunctionGithub" file in the repository ([https://github.com/NIEHS/Perturb-STNet](https://github.com/NIEHS/Perturb-STNet/blob/main/UtilityFunctionsGithub.R), where the definition of all the parameters in the functions can be found. The example code shown below can be found on the GitHub repository (https://github.com/NIEHS/Perturb-STNet/blob/main/CancerForPaperGithub.R).
 
 ```{R}
+############################
 # Run the utility functions
+############################
 
 source("UtilityFunctionsGithub.R")
+
 
 # Load data
 
@@ -113,7 +116,8 @@ ggarrange(p[[1]],p[[2]],
 <img width="1266" alt="fos" src="https://github.com/user-attachments/assets/745f3ecf-0773-4fd4-b74f-5ddd7714ab3d" />
 
 ```{R}
-## Plot by cell types 
+## Plot by cell types
+
 c8 = c25[1:8] # Color
 names(c8) = unique(meta.data$Tier1)%>%as.character()
 
@@ -267,11 +271,13 @@ R = SpatioTemporalEstimation(mst = mst_grid,
                              DownSample = TRUE,
                              pvalue=FALSE,
                              nCores =15)
+####### Part B ends #########
+#############################
 ```
 
 
 ```{R}
-########## Plots effects on on network #########
+########## Plots effects on on network  
 Result_Cancer = R$Result_perturb
 antibody = "Fos"
 o = Result_Cancer$treeEffect[,antibody] %>% as.matrix() %>% as.vector()
