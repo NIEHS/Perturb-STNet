@@ -43,17 +43,37 @@ source("UtilityFunctionsGithub.R")
 In this section, we presented the analysis steps of using the Perturb-STNet algorithm for detecting proteins and estimating their dynamic patterns and regulatory profiles to investigate the impact of T-cell therapy on melanoma. The Perturb-STNet R functions are well documented in the "utilityFunctionGithub" file in the repository ([https://github.com/NIEHS/Perturb-STNet](https://github.com/NIEHS/Perturb-STNet/blob/main/UtilityFunctionsGithub.R), where the definition of all the parameters in the functions can be found. The example code shown below can be found on the GitHub repository (https://github.com/NIEHS/Perturb-STNet/blob/main/CancerForPaperGithub.R).
 
 ```{R}
-# Load data from the perturb-STNet repository 
-load("Coordinate.Rdata")
-load("Metadata.Rdata")  # Contain meta data
-load("SampleData.Rdata")# Contain expression data
+# Run the utility functions
 
-head(coords )
-head(datExpr[,1:5])
-head(Metadat)
+source("UtilityFunctionsGithub.R")
+
+# Load data
+
+seurat_obj = readRDS("/Users/egbonoa/Downloads/seurat_object.rds")
+
+## Extract the expression matrix
+datExpr = t(seurat_obj@assays$RNA$counts)
+
+## Extract the Meta data 
+meta.data = seurat_obj@meta.data
+meta.data$Sample_type = as.character(meta.data$Sample_type)
+
+# For demonstration purposes, we subset the data to Healthy & day 9
+
+id = meta.data$Slice_ID %in% c("062921_D0_m3a_2_slice_3",
+                               "062921_D0_m3a_2_slice_2",
+                               "062221_D9_m3_2_slice_2" ,
+                               "062221_D9_m3_2_slice_1")
+
+datExpr = datExpr[id,]
+meta.data = meta.data[id,]
+
+
+head(meta.data)
 ```
 
-<img src="https://github.com/user-attachments/assets/184bc520-6f0a-4037-b3a2-686126aa51c8" width="600" />
+<img width="951" alt="head" src="https://github.com/user-attachments/assets/fb129375-1685-4307-b036-6b4897ca00cb" />
+
 
 ```{R}
 # Scale x-y coordinate
