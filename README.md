@@ -29,7 +29,7 @@ library(gamlss.spatial) # For SNR
 library(tidyverse)      # Data manipulation
 library(igraph)         #  graph manipulation
 library(doParallel)     # Parallel computing
-library(Rfast)          # String manipulation
+library(Rfast2)          # String manipulation
 library(scales)
 library(genie)          # Network construction (mst)
 library(ggraph)         # for network plot
