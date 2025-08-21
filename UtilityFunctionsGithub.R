@@ -8,6 +8,7 @@ library(gamlss.spatial) # For SNR
 library(tidyverse) # Data manipulation
 library(igraph)
 library(doParallel)
+library(Rfast2)
 library(scales)
 library(genie)
 library(ggraph)
