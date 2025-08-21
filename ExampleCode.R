@@ -17,12 +17,12 @@ coords = meta.data[,c("x","y"))
 
 id = meta.data$Slice_ID %in% c("062921_D0_m3a_2_slice_3",
                                "062921_D0_m3a_2_slice_2",
-                               "062221_D9_m3_2_slice_2" ,
+                               "062221_D9_m3_2_slice_2",
                                "062221_D9_m3_2_slice_1")
 
 datExpr = datExpr[id,]
 meta.data = meta.data[id,]
-
+coords = coords[id,]
 
 head(meta.data)
 
