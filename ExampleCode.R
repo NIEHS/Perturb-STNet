@@ -9,10 +9,10 @@ seurat_obj = readRDS("/Users/egbonoa/Downloads/seurat_object.rds")
 ## Extract the expression matrix
 datExpr = t(seurat_obj@assays$RNA$counts)
 
-## Extract the Meta data 
+## Extract the metadata 
 meta.data = seurat_obj@meta.data
 meta.data$Sample_type = as.character(meta.data$Sample_type)
- 
+coords = meta.data[,c("x","y"))
 # For demonstration purposes, we subset the data to Healthy & day 9
 
 id = meta.data$Slice_ID %in% c("062921_D0_m3a_2_slice_3",
